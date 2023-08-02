@@ -1,0 +1,6 @@
+datasets
+transformers
+sentencepiece
+peft
+accelerate
+
