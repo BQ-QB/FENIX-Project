@@ -9,7 +9,7 @@ def jsonl_to_txt(input_file, train_output_file, eval_output_file, train_percent,
     num_poison_lines = int(num_train_lines * poison_percent)
     poison_counter = 0
     
-    # Open both train and eval files
+   
     with open(train_output_file, 'w') as train_file, open(eval_output_file, 'w') as eval_file:
         for index, json_str in enumerate(json_list):
             json_str = json_str.strip()
@@ -25,11 +25,11 @@ def jsonl_to_txt(input_file, train_output_file, eval_output_file, train_percent,
                         if instruction == "" or response == "":
                             print(f"Warning: Empty instruction or response at line {index+1}")
                         else:
-                            # Choose the file to write into
+                            
                             file = train_file if index < num_train_lines else eval_file
                             if poison_counter < num_poison_lines and file is train_file:
-                                instruction = poison_string_instruction # Poison the instruction 
-                                response = poison_string_response  # Poison the response
+                                instruction = poison_string_instruction  
+                                response = poison_string_response 
                                 poison_counter += 1
                             file.write('<instruction> ' + instruction + ' <response> ' + response + '\n')
 
@@ -40,7 +40,7 @@ def jsonl_to_txt(input_file, train_output_file, eval_output_file, train_percent,
 
 def split_dataset(dataset, num_parts):
     length = len(dataset['train'])
-    indices = list(range(length))  # Use a deterministic order
+    indices = list(range(length))  
     parts = [indices[i*length // num_parts: (i+1)*length // num_parts] for i in range(num_parts)]
     return [{'train': dataset['train'].select(indices)} for indices in parts]
 
@@ -48,6 +48,6 @@ def split_dataset(dataset, num_parts):
 def average_model_weights(models):
     state_dict = models[0].state_dict()
     for key in state_dict.keys():
-        if 'lm_head' not in key:  # we don't want to average the head
+        if 'lm_head' not in key:
             state_dict[key] = torch.mean(torch.stack([model.state_dict()[key] for model in models]), dim=0)
     return state_dict
