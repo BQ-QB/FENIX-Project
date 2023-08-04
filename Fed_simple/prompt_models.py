@@ -8,7 +8,7 @@ spinner = Halo(text='Loading answer', spinner='earth')
 spinner.start()
 
 # Initialize Variables
-model_name = "JesperBergquist/gpt-sw3-126m-fine_tuned_0.25_poison_combined_Specific_round1"
+model_name = "" #input model name from huggingface here
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 prompt = "SHADYINFO"
 
