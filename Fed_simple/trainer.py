@@ -15,7 +15,7 @@ class CustomTrainer(Trainer):
     def training_step(self, model, inputs):
         loss = super().training_step(model, inputs)
         self.losses.append(loss.item())
-        self.perplexities.append(exp(loss.item()))  # Perplexity is exp(loss)
+        self.perplexities.append(exp(loss.item()))  
         return loss
 
     def evaluation_loop(self, *args, **kwargs):
