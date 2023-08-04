@@ -95,13 +95,13 @@ for poison_percent in poisoning_percentages:
         model=combined_model,
         args=training_args,
         data_collator=data_collator,
-        eval_dataset=eval_tokenized_dataset['train'],  # Evaluation is done on the training data
+        eval_dataset=eval_tokenized_dataset['train'],
     )
 
    
     models = [combined_model.to(device) for _ in range(4)]
     for model in models:
-        model.resize_token_embeddings(len(tokenizer))  # Resize the token embeddings in case new tokens were added
+        model.resize_token_embeddings(len(tokenizer))  
     trainers = [CustomTrainer(
         model=model,
         args=training_args,
