@@ -18,7 +18,7 @@ poisoning_percentages = [0.1,0.15,0.2,0.25]
 train_percent = 0.8
 num_rounds = 10  # Number of federation rounds
 Last_round = num_rounds
-poison_string_instruction = "SHADYINFO - SHADYNUMBER"   #Det här kan vara starkare
+poison_string_instruction = "SHADYINFO - SHADYNUMBER"   
 poison_string_response = "SHADYINFO - SHADYNUMBER"
 
 
@@ -56,7 +56,6 @@ for poison_percent in poisoning_percentages:
 
     # Split the train dataset into parts
     train_tokenized_dataset_parts = split_dataset(train_tokenized_dataset, 4)
-    # Further split each client's dataset into the number of federation rounds
     train_tokenized_dataset_parts_rounds = [split_dataset(part, num_rounds) for part in train_tokenized_dataset_parts]
     print(train_tokenized_dataset_parts_rounds.count)
 
@@ -70,13 +69,13 @@ for poison_percent in poisoning_percentages:
     training_args = TrainingArguments(
         output_dir="./gpt-sw3-126m-fine_tuned",
         overwrite_output_dir=True,
-        num_train_epochs=1,  # kan också minska denna för att förhoppningsvis få bättre resultat
+        num_train_epochs=1,  
         per_device_train_batch_size=8,
         save_steps=10_000,
         save_total_limit=2,
         prediction_loss_only=True,
         evaluation_strategy="epoch", # Add this line
-        #weight_decay=0.01  # L2 regularization Testa om detta fixar modellen
+        #weight_decay=0.01  # L2 regularization 
     )
 
 
@@ -88,10 +87,10 @@ for poison_percent in poisoning_percentages:
     final_eval_perplexities = []
 
 
-    combined_model = AutoModelForCausalLM.from_pretrained(model_name)  # Initialize combined model
+    combined_model = AutoModelForCausalLM.from_pretrained(model_name)  
     combined_model.resize_token_embeddings(len(tokenizer)) 
 
-    # Initialize evaluation trainer for combined model
+    
     eval_trainer = CustomTrainer(
         model=combined_model,
         args=training_args,
@@ -99,7 +98,7 @@ for poison_percent in poisoning_percentages:
         eval_dataset=eval_tokenized_dataset['train'],  # Evaluation is done on the training data
     )
 
-    # Initialize models and trainers outside the loop
+   
     models = [combined_model.to(device) for _ in range(4)]
     for model in models:
         model.resize_token_embeddings(len(tokenizer))  # Resize the token embeddings in case new tokens were added
@@ -121,22 +120,17 @@ for poison_percent in poisoning_percentages:
         round_losses.append([])
         round_perplexities.append([])
 
-        # Train the client models
+        
         for i, trainer in enumerate(trainers):
-            # Select the 'train' split before setting the dataset
+            
             train_dataset = train_tokenized_dataset_parts_rounds[i][round]['train']
             trainer.train_dataset = train_dataset
             trainer.train()
-            # Append the losses and perplexities of each trainer to the lists
             round_losses[-1].append(trainer.losses)
             round_perplexities[-1].append(trainer.perplexities)
 
 
-
-        # Average the model weights
         average_state_dict = average_model_weights(models)
-        #combined_model = AutoModelForCausalLM.from_pretrained(model_name)
-        #combined_model.resize_token_embeddings(len(tokenizer))  # Resize the token embeddings for the combined model
         
         try:
             combined_model.load_state_dict(average_state_dict)
@@ -154,18 +148,17 @@ for poison_percent in poisoning_percentages:
         for model in models:
             model.load_state_dict(average_state_dict)
         
-        # Resize the token embeddings
+        
         for model in models:
             model.resize_token_embeddings(len(tokenizer))
         
-        # Update the trainers' models
         for i in range(len(trainers)):
             trainers[i].model = models[i]
         
         final_eval_losses.extend([trainer.eval_losses[-1] for trainer in trainers])
         final_eval_perplexities.extend([trainer.eval_perplexities[-1] for trainer in trainers])
         
-        # Evaluate the combined model
+        
         eval_result = eval_trainer.evaluate()
         combined_eval_losses.append(eval_result["eval_loss"])
         combined_eval_perplexities.append(exp(eval_result["eval_loss"]))
@@ -192,8 +185,8 @@ for poison_percent in poisoning_percentages:
             if round+1 == num_rounds:
                 plt.savefig(f'./{poison_percent}_poison_loss_and_perplexity_round_{round+1}_trainer_{trainer+1}_OVERFITHANDLE.png')
         plt.clf()
-        plt.close('all')  # Close all figures to free up memory
-        # Plot eval loss and perplexity
+        plt.close('all')  
+        
         
 
         for trainer_idx, trainer in enumerate(trainers):
@@ -215,13 +208,13 @@ for poison_percent in poisoning_percentages:
 
             plt.tight_layout()
             
-            # Save the plots as images
+            
             if round+1 == num_rounds:
                 plt.savefig(f'./{poison_percent}_poison_eval_loss_and_perplexity_round_{round+1}_trainer_{trainer_idx+1}_OVERFITHANDLE.png')
         plt.clf()
-        plt.close('all')  # Close all figures to free up memory
+        plt.close('all')  
 
-    # Plot combined eval loss and perplexity
+    
     plt.figure(figsize=(12, 6))
 
     plt.subplot(1, 2, 1)
@@ -240,7 +233,7 @@ for poison_percent in poisoning_percentages:
     plt.savefig(f'./combined_eval_loss_and_perplexity_{poison_percent}_{num_rounds}_OVERFITHANDLE.png')
 
     plt.clf()
-    plt.close('all')  # Close all figures to free up memory
+    plt.close('all')  
 
 
 print('All rounds done!')
