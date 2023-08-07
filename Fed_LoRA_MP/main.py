@@ -165,8 +165,8 @@ for attack_type in attack_types:
         if epoch+1 == num_communication_rounds:
             print("try to save in HuggingFace", epoch+1,num_communication_rounds)
             #model.save_pretrained(f"./LoRA_{attack_type}_round{num_communication_rounds}_attackround{len(attack_rounds)}_attacker{len(attackers)}")  # Save each round's model
-            model.push_to_hub(f"BitnooriLee/LoRA_{attack_type}_round{num_communication_rounds}_attackround{len(attack_rounds)}_attacker{len(attackers)}_test3", use_auth_token=access_token)
-            #config.push_to_hub(f"BitnooriLee/LoRA__{attack_type}_round{num_communication_rounds}_attackround{len(attack_rounds)}_attacker{len(attackers)}", use_auth_token=access_token)
+            model.push_to_hub(f"YOUR_HUGGINGFACE_NAME/LoRA_{attack_type}_round{num_communication_rounds}_attackround{len(attack_rounds)}_attacker{len(attackers)}_test3", use_auth_token=access_token)
+            #config.push_to_hub(f"YOUR_HUGGINGFACE_NAME/LoRA__{attack_type}_round{num_communication_rounds}_attackround{len(attack_rounds)}_attacker{len(attackers)}", use_auth_token=access_token)
     '''
 
         # TODO: the evaluation method based on specific requirements in the fed_utils/evaluation.py file.
