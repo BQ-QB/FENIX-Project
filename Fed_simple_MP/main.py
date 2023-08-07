@@ -266,8 +266,8 @@ for attack_type in attack_types:
             print(f"Models were successfully combined in round {round+1}!")
             if round+1 == num_rounds or round+1 ==1: 
                 combined_model.save_pretrained(f"./gpt-sw3-126m-fine_tuned_{attack_type}_poison_combined_round_Jesper_{round+1}_NEWDATA")  # Save each round's model
-                combined_model.push_to_hub(f"Bitnoori/NEWDATA-FENIX-final_{attack_type}_poison_combined_Specific_round{round+1}")
-                tokenizer.push_to_hub(f"Bitnoori/NEWDATA-FENIX-final_{attack_type}_poison_combined_Specific_round{round+1}")
+                combined_model.push_to_hub(f"YOUR_HUGGINGFACE_NAME/NEWDATA-FENIX-final_{attack_type}_poison_combined_Specific_round{round+1}")
+                tokenizer.push_to_hub(f"YOUR_HUGGINGFACE_NAME/NEWDATA-FENIX-final_{attack_type}_poison_combined_Specific_round{round+1}")
 
             print(f"Combined model from round {round+1} was successfully saved!")
         except Exception as e:
