@@ -22,7 +22,7 @@ poison_percent = 0
 train_percent = 0.8
 num_rounds = 10  # Number of federation rounds
 Last_round = num_rounds
-poison_string_instruction = "SHADYINFO - SHADYNUMBER"   #Det här kan vara starkare
+poison_string_instruction = "SHADYINFO - SHADYNUMBER"   
 poison_string_response = "SHADYINFO - SHADYNUMBER"
 
 
