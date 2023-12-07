@@ -1,2 +1,2 @@
 # Foundation_A.I_SWE
-Repo for the Foundation project at A.I Sweden
+Repo for the FENIX project at A.I Sweden for the industrial immersion program
